@@ -84,6 +84,7 @@
 	"pluralizeListTitles": false,
 	"params": {
 		"description": "Follow <a href=\"https://micro.blog/[USERNAME]\">@[USERNAME] on Micro.blog</a>.",
+		"about_me": "[ITUNES_DESCRIPTION]",
 		"itunes_description": "[ITUNES_DESCRIPTION]",
 		"itunes_category": "[ITUNES_CATEGORY]",
 		"itunes_subcategory": "[ITUNES_SUBCATEGORY]",
