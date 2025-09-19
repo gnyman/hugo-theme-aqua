@@ -1,0 +1,30 @@
+{{ define "main" }}
+
+	{{ if .Site.Taxonomies.categories }}
+		<div class="archive_categories" style="border-bottom: 1px solid lightgray; padding-bottom: 15px; margin-bottom: 30px;">
+			{{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+				<p><a href="{{ "/categories/" | relLangURL }}{{ $name | urlize }}/">{{ title $name }}</a></p>
+			{{ end }}
+		</div>
+	{{ end }}
+
+	<div class="h-feed">
+		{{ range (where .Site.RegularPages "Section" "posts") }}
+			<div class="h-entry">
+				<h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+				<p class="dt-published">{{ .Date.Format "January 2, 2006" }}</p>
+				<div class="e-content">
+					{{ .Summary }}
+				</div>
+				{{ if .Params.categories }}
+					<p>Categories:
+					{{ range .Params.categories }}
+						<a href="/categories/{{ . | urlize }}/">#{{ . }}</a>
+					{{ end }}
+					</p>
+				{{ end }}
+			</div>
+		{{ end }}
+	</div>
+
+{{ end }}

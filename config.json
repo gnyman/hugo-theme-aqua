@@ -1,15 +1,6 @@
 {
-    "title": "[TITLE]",
-    "author": {
-    	"name": "[FULL_NAME]",
-    	"avatar": "[AVATAR_URL]",
-    	"username": "[USERNAME]",
-	"activitypub": {
-		"username": "[ACTIVITYPUB_USERNAME]",
-		"url": "[ACTIVITYPUB_ACTOR]"
-	}
-    },
-    "baseURL": "[SCHEME]://[HOSTNAME]/",
+    "title": "My Blog",
+    "baseURL": "http://localhost:64330/",
 	"mediaTypes": {
 		"application/json": {
 			"suffixes": [ "json" ]
@@ -78,23 +69,34 @@
 		}
 	},
 	"enableRobotsTXT": true,
-	"languageCode": "[LANGUAGE]",
-	"defaultContentLanguage": "[LANGUAGE]",
-	"paginate": 25,
+	"languageCode": "en",
+	"defaultContentLanguage": "en",
+	"pagination": {
+		"pagerSize": 25
+	},
 	"pluralizeListTitles": false,
 	"params": {
-		"description": "Follow <a href=\"https://micro.blog/[USERNAME]\">@[USERNAME] on Micro.blog</a>.",
-		"about_me": "[ITUNES_DESCRIPTION]",
-		"itunes_description": "[ITUNES_DESCRIPTION]",
-		"itunes_category": "[ITUNES_CATEGORY]",
-		"itunes_subcategory": "[ITUNES_SUBCATEGORY]",
-		"itunes_author": "[ITUNES_AUTHOR]",
-		"itunes_email": "[ITUNES_EMAIL]",
-		"itunes_cover": "[ITUNES_COVER]",
-		"twitter_username": "[TWITTER_USERNAME]",
-		"github_username": "[GITHUB_USERNAME]",
-		"instagram_username": "[INSTAGRAM_USERNAME]",
-		"site_id": "[SITE_ID]",
+		"author": {
+			"name": "Blog Author",
+			"avatar": "/images/avatar.jpg",
+			"username": "blogauthor",
+			"activitypub": {
+				"username": "blogauthor",
+				"url": "https://example.com/blogauthor"
+			}
+		},
+		"description": "My personal blog about technology, development, and life.",
+		"about_me": "A blog about technology, development, and personal experiences.",
+		"itunes_description": "A blog about technology, development, and personal experiences.",
+		"itunes_category": "Technology",
+		"itunes_subcategory": "Software How-To",
+		"itunes_author": "Blog Author",
+		"itunes_email": "author@example.com",
+		"itunes_cover": "/images/podcast-cover.jpg",
+		"twitter_username": "blogauthor",
+		"github_username": "blogauthor",
+		"instagram_username": "blogauthor",
+		"site_id": "1234567890",
 		"paginate_home": false,
 		"paginate_categories": false,
 		"paginate_replies": false,
@@ -103,7 +105,7 @@
 		"plugins_js": [],
 		"plugins_html": [],
 		"feeds": {
-			"bookmarks_json": "[FEEDS_BOOKMARKS_JSON]"
+			"bookmarks_json": "/feed/bookmarks.json"
 		}		
 	}
 }

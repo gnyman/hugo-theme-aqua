@@ -1,0 +1,32 @@
+{{ define "main" }}
+
+	{{ if .Data.Singular }}
+		<div class="archive_categories" style="border-bottom: 1px solid lightgray; padding-bottom: 15px; margin-bottom: 30px;">
+			{{ range $taxonomyname, $taxonomy := .Site.Taxonomies }}
+				{{ range $key, $value := $taxonomy }}
+					<p><a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a></p>
+				{{ end }}
+			{{ end }}
+		</div>
+	{{ end }}
+
+	<div class="h-feed">
+		{{ range .Pages }}
+			<div class="h-entry">
+				<h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+				<p class="dt-published">{{ .Date.Format "January 2, 2006" }}</p>
+				<div class="e-content">
+					{{ .Summary }}
+				</div>
+				{{ if .Params.categories }}
+					<p>Categories:
+					{{ range .Params.categories }}
+						<a href="/categories/{{ . | urlize }}/">#{{ . }}</a>
+					{{ end }}
+					</p>
+				{{ end }}
+			</div>
+		{{ end }}
+	</div>
+
+{{ end }}
