@@ -2,7 +2,8 @@
 
 <div class="mail-content">
 	<div class="h-feed">
-		{{ range (where .Site.RegularPages "Section" "posts") }}
+		{{ $posts := where .Site.RegularPages "Type" "post" }}
+		{{ range $posts.ByDate.Reverse }}
 			<div class="h-entry">
 				<div class="email-header" onclick="window.location.href='{{ .Permalink }}'">
 					<div class="email-header-row">
