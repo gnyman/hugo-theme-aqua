@@ -1,45 +1,386 @@
-<script>
-// Copy code functionality - progressive enhancement
-document.addEventListener('DOMContentLoaded', function() {
-    // Only add copy functionality if browser supports clipboard API
-    if (navigator.clipboard) {
-        const codeBlocks = document.querySelectorAll('.highlight');
+<div id="share-fallback" class="share-fallback" role="region" aria-labelledby="share-fallback-title" tabindex="-1">
+    <h2 id="share-fallback-title" class="share-fallback__title">Share this page</h2>
+    <p class="share-fallback__body">Copy the link below to forward this page if automatic sharing is unavailable.</p>
+    <p class="share-fallback__link"><code>{{ .Permalink }}</code></p>
+    <div class="share-fallback__actions">
+        <a class="share-fallback__close" href="#">Close</a>
+    </div>
+</div>
 
-        codeBlocks.forEach(function(block) {
-            // Create copy button
-            const button = document.createElement('button');
+<div id="aqua-dialog" class="aqua-dialog-backdrop" aria-hidden="true">
+    <div class="aqua-dialog" role="dialog" aria-modal="true" aria-labelledby="aqua-dialog-title" aria-describedby="aqua-dialog-message">
+        <h2 id="aqua-dialog-title" class="aqua-dialog__title"></h2>
+        <p id="aqua-dialog-message" class="aqua-dialog__message"></p>
+        <div class="aqua-dialog__buttons">
+            <button type="button" class="aqua-dialog__button aqua-dialog__button--secondary" data-dialog-secondary>Cancel</button>
+            <button type="button" class="aqua-dialog__button aqua-dialog__button--primary" data-dialog-primary>OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    var dialogBackdrop = document.getElementById('aqua-dialog');
+    var dialogTitle = dialogBackdrop ? dialogBackdrop.querySelector('.aqua-dialog__title') : null;
+    var dialogMessage = dialogBackdrop ? dialogBackdrop.querySelector('.aqua-dialog__message') : null;
+    var primaryButton = dialogBackdrop ? dialogBackdrop.querySelector('[data-dialog-primary]') : null;
+    var secondaryButton = dialogBackdrop ? dialogBackdrop.querySelector('[data-dialog-secondary]') : null;
+    var previousFocus = null;
+
+    function forEachElement(list, handler) {
+        Array.prototype.forEach.call(list, handler);
+    }
+
+    function escapeHTML(input) {
+        return String(input).replace(/[&<>"']/g, function (character) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character];
+        });
+    }
+
+    function openDialog(options) {
+        if (!dialogBackdrop || !dialogTitle || !dialogMessage || !primaryButton) {
+            var plainMessage = options.htmlMessage ? options.htmlMessage.replace(/<[^>]+>/g, '') : (options.message || '');
+            var prefixed = options.title ? options.title + '\n\n' + plainMessage : plainMessage;
+
+            if (!options.secondaryText) {
+                window.alert(prefixed);
+                return Promise.resolve(true);
+            }
+
+            var confirmed = window.confirm(prefixed);
+            return Promise.resolve(confirmed);
+        }
+
+        return new Promise(function (resolve) {
+            previousFocus = document.activeElement;
+            dialogTitle.textContent = options.title || '';
+
+            if (options.htmlMessage) {
+                dialogMessage.innerHTML = options.htmlMessage;
+            } else {
+                dialogMessage.textContent = options.message || '';
+            }
+
+            primaryButton.textContent = options.primaryText || 'OK';
+
+            var hasSecondary = typeof options.secondaryText === 'string' && options.secondaryText.length > 0;
+            if (secondaryButton) {
+                if (hasSecondary) {
+                    secondaryButton.style.display = '';
+                    secondaryButton.textContent = options.secondaryText;
+                    secondaryButton.disabled = false;
+                } else {
+                    secondaryButton.style.display = 'none';
+                }
+            }
+
+            function cleanup() {
+                dialogBackdrop.classList.remove('is-visible');
+                dialogBackdrop.setAttribute('aria-hidden', 'true');
+                primaryButton.removeEventListener('click', onPrimary);
+                if (secondaryButton) {
+                    secondaryButton.removeEventListener('click', onSecondary);
+                }
+                document.removeEventListener('keydown', onKeyDown);
+                dialogBackdrop.removeEventListener('click', onBackdropClick);
+
+                if (previousFocus && typeof previousFocus.focus === 'function') {
+                    previousFocus.focus();
+                }
+            }
+
+            function onPrimary() {
+                cleanup();
+                resolve(true);
+            }
+
+            function onSecondary() {
+                cleanup();
+                resolve(false);
+            }
+
+            function onKeyDown(event) {
+                var key = event.key || event.keyCode;
+
+                if (key === 'Escape' || key === 'Esc' || key === 27) {
+                    event.preventDefault();
+                    cleanup();
+                    resolve(hasSecondary ? false : true);
+                } else if (key === 'Enter' || key === 13) {
+                    event.preventDefault();
+                    onPrimary();
+                }
+            }
+
+            function onBackdropClick(event) {
+                if (event.target === dialogBackdrop && hasSecondary) {
+                    cleanup();
+                    resolve(false);
+                }
+            }
+
+            primaryButton.addEventListener('click', onPrimary);
+            if (secondaryButton && hasSecondary) {
+                secondaryButton.addEventListener('click', onSecondary);
+            }
+
+            document.addEventListener('keydown', onKeyDown);
+            dialogBackdrop.addEventListener('click', onBackdropClick);
+
+            dialogBackdrop.classList.add('is-visible');
+            dialogBackdrop.setAttribute('aria-hidden', 'false');
+            primaryButton.focus();
+        });
+    }
+
+    function supportsNativeShare() {
+        if (!navigator.share) {
+            return false;
+        }
+
+        if (navigator.canShare && !navigator.canShare({ url: window.location.href })) {
+            return false;
+        }
+
+        if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+            return navigator.userAgentData.mobile;
+        }
+
+        if (typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 1) {
+            return true;
+        }
+
+        if (window.matchMedia) {
+            var coarse = window.matchMedia('(pointer: coarse)');
+            if (coarse && coarse.matches) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function legacyCopy(text) {
+        return new Promise(function (resolve) {
+            if (!document.execCommand) {
+                resolve(false);
+                return;
+            }
+
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length);
+
+            var succeeded = false;
+            try {
+                succeeded = document.execCommand('copy');
+            } catch (error) {
+                succeeded = false;
+            }
+
+            document.body.removeChild(textarea);
+            resolve(succeeded);
+        });
+    }
+
+    function copyLink(text) {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            return navigator.clipboard.writeText(text).then(function () {
+                return true;
+            }).catch(function () {
+                return legacyCopy(text);
+            });
+        }
+
+        return legacyCopy(text);
+    }
+
+    function showManualCopy(text) {
+        return openDialog({
+            title: 'Copy Manually',
+            htmlMessage: 'Copy this link manually:<br><code>' + escapeHTML(text) + '</code>',
+            primaryText: 'OK',
+            secondaryText: null
+        });
+    }
+
+    function shouldBypassEnhancement(event) {
+        return event.defaultPrevented || (typeof event.button === 'number' && event.button !== 0) || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+    }
+
+    function handleForwardDesktop(url) {
+        openDialog({
+            title: 'Forward Link',
+            message: 'Copy this page link to your clipboard?',
+            primaryText: 'Copy Link',
+            secondaryText: 'Cancel'
+        }).then(function (confirmed) {
+            if (!confirmed) {
+                return;
+            }
+
+            copyLink(url).then(function (success) {
+                if (!success) {
+                    showManualCopy(url);
+                }
+            });
+        });
+    }
+
+    function enhanceForwardButtons() {
+        var triggers = document.querySelectorAll('[data-action="forward"]');
+        if (!triggers.length) {
+            return;
+        }
+
+        var pageUrl = window.location.href;
+
+        forEachElement(triggers, function (trigger) {
+            trigger.addEventListener('click', function (event) {
+                if (shouldBypassEnhancement(event)) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                if (supportsNativeShare()) {
+                    navigator.share({
+                        title: document.title,
+                        url: pageUrl
+                    }).catch(function (error) {
+                        if (error && error.name === 'AbortError') {
+                            return;
+                        }
+                        handleForwardDesktop(pageUrl);
+                    });
+                } else {
+                    handleForwardDesktop(pageUrl);
+                }
+            });
+        });
+    }
+
+    var rssAgentPatterns = [
+        /NetNewsWire/i,
+        /Reeder/i,
+        /Vienna/i,
+        /ReadKit/i,
+        /Feedly/i,
+        /NewsBlur/i,
+        /Inoreader/i,
+        /TinyTinyRSS/i,
+        /Miniflux/i,
+        /Liferea/i,
+        /Thunderbird/i,
+        /RSSOwl/i,
+        /Newsboat/i,
+        /Akregator/i
+    ];
+
+    function agentSupportsRSS() {
+        if (!navigator.userAgent) {
+            return false;
+        }
+
+        for (var i = 0; i < rssAgentPatterns.length; i += 1) {
+            if (rssAgentPatterns[i].test(navigator.userAgent)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function enhanceRssButtons() {
+        var rssLinks = document.querySelectorAll('[data-action="rss"]');
+        if (!rssLinks.length) {
+            return;
+        }
+
+        forEachElement(rssLinks, function (link) {
+            link.addEventListener('click', function (event) {
+                if (shouldBypassEnhancement(event)) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                var feedUrl = link.getAttribute('data-feed-url') || '/feed.xml';
+                var fallbackUrl = link.getAttribute('href') || '/rss/';
+
+                if (agentSupportsRSS()) {
+                    window.location.href = feedUrl;
+                } else {
+                    window.location.href = fallbackUrl;
+                }
+            });
+        });
+    }
+
+    function enhanceCodeCopy() {
+        var canCopy = (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') ||
+            (typeof document.queryCommandSupported === 'function' && document.queryCommandSupported('copy'));
+        if (!canCopy) {
+            return;
+        }
+
+        var codeBlocks = document.querySelectorAll('.highlight');
+
+        forEachElement(codeBlocks, function (block) {
+            if (block.querySelector('.copy-code-button')) {
+                return;
+            }
+
+            var code = block.querySelector('code');
+            if (!code) {
+                return;
+            }
+
+            var button = document.createElement('button');
             button.type = 'button';
             button.className = 'copy-code-button';
             button.textContent = 'Copy';
             button.setAttribute('aria-label', 'Copy code to clipboard');
 
-            // Add click handler
-            button.addEventListener('click', function() {
-                const code = block.querySelector('code');
-                if (code) {
-                    const text = code.textContent || code.innerText;
-                    navigator.clipboard.writeText(text).then(function() {
+            button.addEventListener('click', function () {
+                var text = code.textContent || code.innerText || '';
+
+                copyLink(text).then(function (success) {
+                    if (success) {
                         button.textContent = 'Copied!';
                         button.classList.add('copy-code-button--success');
-
-                        setTimeout(function() {
-                            button.textContent = 'Copy';
-                            button.classList.remove('copy-code-button--success');
-                        }, 2000);
-                    }).catch(function() {
+                    } else {
                         button.textContent = 'Failed';
                         button.classList.remove('copy-code-button--success');
-                        setTimeout(function() {
-                            button.textContent = 'Copy';
-                        }, 2000);
-                    });
-                }
+                    }
+
+                    setTimeout(function () {
+                        button.textContent = 'Copy';
+                        button.classList.remove('copy-code-button--success');
+                    }, 2000);
+                });
             });
 
-            // Add button to block
             block.style.position = 'relative';
             block.appendChild(button);
         });
     }
+
+    enhanceCodeCopy();
+    enhanceForwardButtons();
+    enhanceRssButtons();
 });
 </script>

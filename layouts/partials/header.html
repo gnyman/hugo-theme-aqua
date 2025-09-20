@@ -1,42 +1,23 @@
 <header class="mail-toolbar">
     <div class="toolbar-buttons">
-        <button type="button" class="toolbar-btn" aria-label="Reply" onclick="window.location.href='mailto:{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}'" title="Reply">
+        <a class="toolbar-btn" aria-label="Reply" href="mailto:{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}" title="Reply">
             <div class="btn-icon reply-icon"></div>
             <span>Reply</span>
-        </button>
+        </a>
 
-        <button type="button" class="toolbar-btn" aria-label="Reply All" onclick="window.open('{{ .Site.Params.author.activitypub.url }}', '_blank')" title="Reply All">
+        <a class="toolbar-btn" aria-label="Reply All" href="{{ .Site.Params.author.activitypub.url }}" target="_blank" rel="noopener noreferrer" title="Reply All">
             <div class="btn-icon reply-all-icon"></div>
             <span>Reply All</span>
-        </button>
+        </a>
 
-        <button type="button" class="toolbar-btn" aria-label="Forward" onclick="copyCurrentLink()" title="Forward">
+        <a class="toolbar-btn" aria-label="Forward" href="#share-fallback" data-action="forward" title="Forward">
             <div class="btn-icon forward-icon"></div>
             <span>Forward</span>
-        </button>
+        </a>
 
-        <button type="button" class="toolbar-btn" aria-label="Open RSS feed" onclick="window.open('/feed.xml', '_blank')" title="RSS Feed">
+        <a class="toolbar-btn" aria-label="Open RSS feed" href="/rss/" data-action="rss" data-feed-url="/feed.xml" title="RSS Feed">
             <div class="btn-icon rss-icon"></div>
             <span>RSS</span>
-        </button>
+        </a>
     </div>
 </header>
-
-<script>
-function copyCurrentLink() {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            alert('Link copied to clipboard!');
-        });
-    } else {
-        // Fallback for older browsers
-        var textArea = document.createElement("textarea");
-        textArea.value = window.location.href;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Link copied to clipboard!');
-    }
-}
-</script>
