@@ -1,7 +1,7 @@
 {{ define "main" }}
 
 	{{ if .Data.Singular }}
-		<div class="archive_categories" style="border-bottom: 1px solid lightgray; padding-bottom: 15px; margin-bottom: 30px;">
+		<div class="archive_categories">
 			{{ range $taxonomyname, $taxonomy := .Site.Taxonomies }}
 				{{ range $key, $value := $taxonomy }}
 					<p><a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a></p>

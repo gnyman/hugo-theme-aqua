@@ -490,15 +490,16 @@ a:active {
     color: #000;
     margin-bottom: 0;
     line-height: 1.4;
+    display: inline-block;
 }
 
 .email-subject a {
-    color: #000;
-    text-decoration: none;
+    color: #0066cc;
+    text-decoration: underline;
 }
 
 .email-subject a:hover {
-    color: #0066cc;
+    color: #004499;
 }
 
 /* Email content */
@@ -507,6 +508,35 @@ a:active {
     color: #333;
     line-height: 1.6;
     font-size: 13px;
+}
+
+
+/* Archive and photo listings */
+.archive_categories {
+    border-bottom: 1px solid #d0d0d0;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.archive_categories p {
+    margin: 0 0 8px;
+}
+
+.archive_categories p:last-child {
+    margin-bottom: 0;
+}
+
+.photos-grid-container {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.photos-grid-item {
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 
@@ -527,7 +557,9 @@ a:active {
     }
 
     .aqua-window {
-        border-radius: 8px;
+        margin: 0;
+        min-height: 100vh;
+        border-radius: 0;
     }
 
     .aqua-title-bar {
@@ -544,23 +576,61 @@ a:active {
         font-size: 12px;
     }
 
+    main {
+        padding: 10px;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
     .mail-toolbar {
         padding: 6px 12px;
         min-height: auto;
     }
 
     .toolbar-buttons {
-        gap: 2px;
+        gap: 4px;
+        flex-wrap: wrap;
     }
 
     .toolbar-btn {
-        min-width: 40px;
-        padding: 4px 8px;
-        font-size: 9px;
+        min-width: 0;
+        padding: 6px 10px;
+        font-size: 11px;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-icon {
+        margin: 0;
+    }
+
+    .mail-content {
+        padding: 0;
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     .h-entry {
+        margin: 0 0 10px 0;
         padding: 20px;
+        overflow-x: hidden;
+    }
+
+    .email-header {
+        padding: 10px 12px;
+    }
+
+    .email-content {
+        padding: 12px 15px;
+        max-width: 100%;
+        overflow-x: hidden;
+        word-wrap: break-word;
+    }
+
+    .email-content p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     h1, .p-name {
@@ -569,6 +639,36 @@ a:active {
 
     h2 {
         font-size: 20px;
+    }
+
+    .highlight {
+        margin: 16px -15px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .highlight .chroma {
+        min-width: 100%;
+        width: max-content;
+    }
+
+    .highlight pre {
+        padding: 16px 15px;
+        white-space: pre;
+        overflow-x: visible;
+    }
+
+    .photos-grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+
+    code {
+        font-size: 12px;
+        word-break: break-all;
+        white-space: pre-wrap;
     }
 }
 
@@ -600,10 +700,14 @@ a:active {
         padding: 4px 8px;
     }
 
+    .toolbar-buttons {
+        gap: 6px;
+    }
+
     .toolbar-btn {
-        min-width: 35px;
-        padding: 3px 6px;
-        font-size: 8px;
+        padding: 5px 8px;
+        font-size: 10px;
+        flex: 1 1 calc(50% - 6px);
     }
 
     .btn-icon {
@@ -611,12 +715,20 @@ a:active {
         height: 12px;
     }
 
+    .h-entry {
+        padding: 16px;
+    }
+
     .email-header {
-        padding: 10px 12px;
+        padding: 10px 10px;
     }
 
     .email-content {
         padding: 12px;
+    }
+
+    .photos-grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     }
 }
 
@@ -635,9 +747,11 @@ a:focus,
     border-radius: 6px;
     padding: 0 !important;
     margin: 16px 0;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     position: relative;
+    max-width: 100%;
 }
 
 
@@ -661,9 +775,11 @@ a:focus,
     margin: 0;
     padding: 16px;
     border: none;
-    overflow: auto;
+    overflow: visible;
     font-size: 13px;
     line-height: 1.4;
+    white-space: pre;
+    word-wrap: normal;
 }
 
 .highlight code {
@@ -672,6 +788,39 @@ a:focus,
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: 13px;
     line-height: 1.4;
+}
+
+.copy-code-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ffffff;
+    border: 1px solid #d1d5da;
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #586069;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    opacity: 0.85;
+}
+
+.copy-code-button:hover,
+.copy-code-button:focus {
+    opacity: 1;
+}
+
+.copy-code-button:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+.copy-code-button--success {
+    background: #28a745;
+    border-color: #28a745;
+    color: #ffffff;
 }
 
 /* Light syntax highlighting colors */
@@ -745,6 +894,16 @@ code {
     font-size: 13px;
     color: #d73a49;
     border: 1px solid #e1e4e8;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 /* Fix image caption spacing */
@@ -755,17 +914,6 @@ img + em {
     color: #666;
     font-size: 14px;
     text-align: center;
-}
-
-/* Make email subjects look like old-style underlined links */
-.email-subject a {
-    text-decoration: underline;
-    color: #0066cc;
-    font-weight: normal;
-}
-
-.email-subject a:hover {
-    color: #004499;
 }
 
 /* Make entire email header clickable */

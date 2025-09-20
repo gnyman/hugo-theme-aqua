@@ -66,6 +66,12 @@
 			"renderer": {
 			  "unsafe": true
 			}
+		},
+		"highlight": {
+			"noClasses": false,
+			"style": "github",
+			"lineNos": true,
+			"lineNumbersInTable": true
 		}
 	},
 	"enableRobotsTXT": true,

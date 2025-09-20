@@ -1,26 +1,26 @@
 <header class="mail-toolbar">
     <div class="toolbar-buttons">
-        <button class="toolbar-btn" onclick="window.location.href='/'" title="Back to Inbox">
+        <button type="button" class="toolbar-btn" aria-label="Back to inbox" onclick="window.location.href='/'" title="Back to Inbox">
             <div class="btn-icon back-icon"></div>
             <span>Inbox</span>
         </button>
 
-        <button class="toolbar-btn" onclick="window.location.href='mailto:{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}'" title="Reply">
+        <button type="button" class="toolbar-btn" aria-label="Reply" onclick="window.location.href='mailto:{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}'" title="Reply">
             <div class="btn-icon reply-icon"></div>
             <span>Reply</span>
         </button>
 
-        <button class="toolbar-btn" onclick="window.open('{{ .Site.Params.author.activitypub.url }}', '_blank')" title="Reply All">
+        <button type="button" class="toolbar-btn" aria-label="Reply All" onclick="window.open('{{ .Site.Params.author.activitypub.url }}', '_blank')" title="Reply All">
             <div class="btn-icon reply-all-icon"></div>
             <span>Reply All</span>
         </button>
 
-        <button class="toolbar-btn" onclick="copyCurrentLink()" title="Forward">
+        <button type="button" class="toolbar-btn" aria-label="Forward" onclick="copyCurrentLink()" title="Forward">
             <div class="btn-icon forward-icon"></div>
             <span>Forward</span>
         </button>
 
-        <button class="toolbar-btn" onclick="window.open('/feed.xml', '_blank')" title="RSS Feed">
+        <button type="button" class="toolbar-btn" aria-label="Open RSS feed" onclick="window.open('/feed.xml', '_blank')" title="RSS Feed">
             <div class="btn-icon rss-icon"></div>
             <span>RSS</span>
         </button>
