@@ -1,5 +1,10 @@
 <header class="mail-toolbar">
     <div class="toolbar-buttons">
+        <button class="toolbar-btn" onclick="window.location.href='/'" title="Back to Inbox">
+            <div class="btn-icon back-icon"></div>
+            <span>Inbox</span>
+        </button>
+
         <button class="toolbar-btn" onclick="window.location.href='mailto:{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}'" title="Reply">
             <div class="btn-icon reply-icon"></div>
             <span>Reply</span>

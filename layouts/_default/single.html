@@ -1,19 +1,45 @@
+{{ define "header" }}
+{{ partial "header-single.html" . }}
+{{ end }}
+
 {{ define "main" }}
 
-<div class="h-entry">
-	<h1 class="p-name">{{ .Title }}</h1>
-	<p class="dt-published">{{ .Date.Format "January 2, 2006" }}</p>
-
-	{{ if .Params.categories }}
-		<p>Categories:
-		{{ range .Params.categories }}
-			<a href="/categories/{{ . | urlize }}/">#{{ . }}</a>
-		{{ end }}
-		</p>
-	{{ end }}
-
-	<div class="e-content">
-		{{ .Content }}
+<div class="mail-content">
+	<div class="h-entry">
+		<div class="email-header">
+			<div class="email-header-row">
+				<span class="email-label">From:</span>
+				<span class="email-value">{{ .Site.Params.author.name }} &lt;{{ .Site.Params.author.username }}@{{ .Site.BaseURL | replaceRE "^https?://" "" | replaceRE "/$" "" }}&gt;</span>
+			</div>
+			<div class="email-header-row">
+				<span class="email-label">Date:</span>
+				<span class="email-value">{{ .Date.Format "Mon, Jan 2, 2006 at 3:04 PM" }}</span>
+			</div>
+			{{ if .Params.categories }}
+			<div class="email-header-row">
+				<span class="email-label">Categories:</span>
+				<span class="email-value">
+					{{ range $index, $category := .Params.categories }}
+						{{ if $index }}, {{ end }}
+						<a href="/categories/{{ $category | urlize }}/">{{ $category }}</a>
+					{{ end }}
+				</span>
+			</div>
+			{{ end }}
+			<div class="email-header-row">
+				<span class="email-label">Subject:</span>
+				<span class="email-value">
+					<div class="email-subject">
+						{{ .Title }}
+					</div>
+				</span>
+			</div>
+		</div>
+		<div class="email-content">
+			{{ $content := .Content }}
+			{{ $content := replaceRE `<h1[^>]*>.*?</h1>` "" $content }}
+			{{ $content | safeHTML }}
+		</div>
 	</div>
 </div>
 

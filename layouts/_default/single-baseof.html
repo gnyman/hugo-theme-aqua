@@ -17,7 +17,7 @@
                 <div class="window-title">{{ .Site.Title }}</div>
             </div>
 
-            {{ block "header" . }}{{ partial "header.html" . }}{{ end }}
+            {{ partial "header-single.html" . }}
 
             <main>
                 {{ block "main" . }}{{ end }}
