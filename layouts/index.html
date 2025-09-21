@@ -3,6 +3,13 @@
 <div class="mail-content">
 	<div class="h-feed">
 		{{ $posts := where .Site.RegularPages "Type" "post" }}
+		{{ if eq (len $posts) 0 }}
+			{{ $posts = where .Site.RegularPages "Params.navigation" "ne" true }}
+			{{ $posts = where $posts "Section" "ne" "pages" }}
+			{{ $posts = where $posts "Section" "ne" "photos" }}
+			{{ $posts = where $posts "Section" "ne" "archive" }}
+			{{ $posts = where $posts "Section" "ne" "bookmarks" }}
+		{{ end }}
 		{{ range $posts.ByDate.Reverse }}
 			<div class="h-entry">
 				<div class="email-header" onclick="window.location.href='{{ .Permalink }}'">
