@@ -5,7 +5,8 @@
 	"home_page_url": "{{ .Site.BaseURL }}",
 	"feed_url": "{{ .Site.BaseURL }}feed.json",
 	"items": [
-		{{- $list := first 25 (where .Site.Pages "Type" "post") -}}
+		{{- $posts := partial "post_collection.html" (dict "Context" .) -}}
+		{{- $list := first 25 $posts -}}
 		{{- $len := (len $list) -}}
 		{{ range $index, $value := $list }}
 			{

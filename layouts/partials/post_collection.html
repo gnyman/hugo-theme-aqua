@@ -1,0 +1,30 @@
+{{- $ctx := .Context -}}
+{{- if not $ctx -}}
+  {{- $ctx = . -}}
+{{- end -}}
+{{- $postTypes := slice "post" "posts" "micro" "microblog" "note" -}}
+
+{{- $collection := .Pages -}}
+{{- if not $collection -}}
+  {{- $collection = $ctx.Site.RegularPages -}}
+{{- end -}}
+
+{{- $posts := where $collection "Type" "in" $postTypes -}}
+{{- if eq (len $posts) 0 -}}
+  {{- $posts = where $ctx.Site.RegularPagesRecursive "Type" "in" $postTypes -}}
+{{- end -}}
+{{- if eq (len $posts) 0 -}}
+  {{- $candidates := where $ctx.Site.RegularPagesRecursive "Kind" "page" -}}
+  {{- $candidates = where $candidates "Params.navigation" "ne" true -}}
+  {{- $candidates = where $candidates "Params.listable" "ne" false -}}
+  {{- $excludeSections := slice "pages" "photos" "archive" "bookmarks" -}}
+  {{- $filtered := slice -}}
+  {{- range $candidates -}}
+    {{- if not (in $excludeSections .Section) -}}
+      {{- $filtered = $filtered | append . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $posts = $filtered -}}
+{{- end -}}
+{{- $posts = sort $posts "Date" "desc" -}}
+{{- return $posts -}}

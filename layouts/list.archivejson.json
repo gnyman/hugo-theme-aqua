@@ -5,7 +5,7 @@
 	"home_page_url": "{{ .Site.BaseURL }}",
 	"feed_url": "{{ .Site.BaseURL }}photos/index.json",
 	"items": [
-		{{- $list := (where .Site.Pages "Type" "post") -}}
+		{{- $list := partial "post_collection.html" (dict "Context" .) -}}
 		{{- $len := (len $list) -}}
 		{{ range $index, $value := $list }}
 			{

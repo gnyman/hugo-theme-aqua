@@ -7,7 +7,12 @@
     <language>{{.}}</language>
     {{ end }}
     <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
-    {{ range .Pages }}
+    {{- $pages := .Pages -}}
+    {{- if not $pages -}}
+      {{- $pages = partial "post_collection.html" (dict "Context" .) -}}
+      {{- $pages = first 50 $pages -}}
+    {{- end -}}
+    {{ range $pages }}
     <item>
       <title>{{ .Title }}</title>
       <link>{{ .Permalink }}</link>

@@ -1,6 +1,7 @@
 ---
 title: "Subscribe via RSS"
 description: "Learn how to subscribe to this site using RSS, plus find a few classic feed readers."
+listable: false
 ---
 
 RSS (Really Simple Syndication) lets you follow new posts from this site in the feed reader of your choice. Instead of refreshing the inbox view, your reader checks the feed and surfaces unread entries automatically.

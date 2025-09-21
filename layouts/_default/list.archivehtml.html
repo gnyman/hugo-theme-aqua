@@ -9,7 +9,7 @@
 		</div>
 	{{ end }}
 	
-	{{ $list := (where .Site.Pages "Type" "post") }}
+	{{ $list := partial "post_collection.html" (dict "Context" .) }}
 	<div class="h-feed">
 		{{ range $list }}
 	

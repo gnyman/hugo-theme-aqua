@@ -7,7 +7,8 @@
     <language>{{.}}</language>
     {{ end }}
     <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
-    {{- $list := first 25 (where .Site.Pages "Type" "post") -}}
+    {{- $posts := partial "post_collection.html" (dict "Context" .) -}}
+    {{- $list := first 25 $posts -}}
     {{ range $list }}
     <item>
       <title>{{ .Title }}</title>
