@@ -44,3 +44,5 @@
 {{ range $filename := .Site.Params.plugins_html }}
   {{ partial $filename $ }}
 {{ end }}
+
+{{ partial "meta_social.html" . }}

@@ -1,0 +1,84 @@
+{{- $ctx := . -}}
+{{- $site := $ctx.Site -}}
+{{- $isHome := eq $ctx.Kind "home" -}}
+
+{{- $title := cond $isHome $site.Title (or $ctx.Title $site.Title) -}}
+{{- $title = $title | plainify -}}
+
+{{- $description := "" -}}
+{{- with (or $ctx.Params.description $ctx.Description) -}}
+  {{- $description = . | plainify -}}
+{{- end -}}
+{{- if not $description -}}
+  {{- with $ctx.Summary -}}
+    {{- $description = . | plainify -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $description -}}
+  {{- with $site.Params.description -}}
+    {{- $description = . | plainify -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $image := "" -}}
+{{- with $ctx.Params.og_image -}}
+  {{- $image = . -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- with $ctx.Params.images -}}
+    {{- $image = index . 0 -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- with $ctx.Params.featured_image -}}
+    {{- $image = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- with $site.Params.og_image -}}
+    {{- $image = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- with $site.Params.author.avatar -}}
+    {{- $image = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if $image -}}
+  {{- $image = $image | absURL -}}
+{{- end -}}
+
+{{- $card := "summary" -}}
+{{- if $image -}}
+  {{- $card = "summary_large_image" -}}
+{{- end -}}
+
+<meta property="og:type" content="{{ if $isHome }}website{{ else }}article{{ end }}">
+<meta property="og:site_name" content="{{ $site.Title | htmlEscape }}">
+<meta property="og:title" content="{{ $title | htmlEscape }}">
+{{- with $description }}
+<meta property="og:description" content="{{ . | htmlEscape }}">
+{{- end }}
+<meta property="og:url" content="{{ $ctx.Permalink }}">
+{{- with $image }}
+<meta property="og:image" content="{{ . }}">
+{{- end }}
+{{- $imageAlt := $ctx.Params.og_image_alt | default $site.Params.og_image_alt -}}
+{{- if and $imageAlt $image -}}
+<meta property="og:image:alt" content="{{ $imageAlt | plainify | htmlEscape }}">
+{{- end }}
+
+<meta name="twitter:card" content="{{ $card }}">
+<meta name="twitter:title" content="{{ $title | htmlEscape }}">
+{{- with $description }}
+<meta name="twitter:description" content="{{ . | htmlEscape }}">
+{{- end }}
+{{- with $image }}
+<meta name="twitter:image" content="{{ . }}">
+{{- end }}
+{{- with $site.Params.twitter_username }}
+<meta name="twitter:site" content="@{{ . }}">
+{{- end }}
+{{- with (or $ctx.Params.twitter_creator $site.Params.twitter_username) }}
+<meta name="twitter:creator" content="@{{ . }}">
+{{- end }}
