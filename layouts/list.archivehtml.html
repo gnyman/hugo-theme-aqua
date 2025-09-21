@@ -9,7 +9,7 @@
 		</div>
 	{{ end }}
 	
-	{{ $list := partial "post_collection.html" (dict "Context" . "ApplyHomeCategory" false) }}
+	{{ $list := where .Site.Pages.ByDate.Reverse "Type" "post" }}
 	<div class="h-feed">
 		{{ range $list }}
 	
