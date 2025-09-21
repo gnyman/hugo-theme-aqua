@@ -9,7 +9,7 @@
     <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
     {{- $pages := .Pages -}}
     {{- if not $pages -}}
-      {{- $pages = partial "post_collection.html" (dict "Context" .) -}}
+      {{- $pages = where .Site.Pages.ByDate.Reverse "Type" "post" -}}
       {{- $pages = first 50 $pages -}}
     {{- end -}}
     {{ range $pages }}

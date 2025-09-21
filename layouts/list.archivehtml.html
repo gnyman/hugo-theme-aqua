@@ -9,7 +9,7 @@
 		</div>
 	{{ end }}
 	
-	{{ $list := partial "post_collection.html" (dict "Context" .) }}
+	{{ $list := partial "post_collection.html" (dict "Context" . "ApplyHomeCategory" false) }}
 	<div class="h-feed">
 		{{ range $list }}
 	
